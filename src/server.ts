@@ -35,7 +35,9 @@ app.get("/filteredimage/", async (req, res) => {
     let filteredpath = "";
     await filterImageFromURL(image_url).then((value) => filteredpath = value).catch((reason)=>res.status(400).send("ERROR: " + reason));
     res.status(200).sendFile(filteredpath);
-    deleteLocalFiles(image_url);
+    res.on('finish', () => {
+      Promise.resolve(deleteLocalFiles([filteredpath]))
+      })
   });
 ;
 
